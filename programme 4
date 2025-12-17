@@ -1,0 +1,68 @@
+#include <stdio.h>
+
+// 1) Fonction pour calculer le PGCD avec l'algorithme d'Euclide
+int pgcd(int a, int b) {
+    int r;
+    while (b != 0) {
+        r = a % b;
+        a = b;
+        b = r;
+    }
+    return a;
+}
+
+// 2) Algorithme d'Euclide étendu
+// Retourne d = PGCD(a,b) et les coefficients x0, y0 tels que a*x0 + b*y0 = d
+int euclide_etendu(int a, int b, int *x, int *y) {
+    if (b == 0) {
+        *x = 1;
+        *y = 0;
+        return a;
+    }
+    int x1, y1;
+    int d = euclide_etendu(b, a % b, &x1, &y1);
+    *x = y1;
+    *y = x1 - (a / b) * y1;
+    return d;
+}
+
+int main() {
+    int a, b, c;
+    int x0, y0; // coefficients de Bézout
+
+    // 6) Interaction avec l’utilisateur
+    printf("=== Résolution de l'équation diophantienne a*x + b*y = c ===\n\n");
+    printf("Entrez a : ");
+    scanf("%d", &a);
+    printf("Entrez b : ");
+    scanf("%d", &b);
+    printf("Entrez c : ");
+    scanf("%d", &c);
+
+    // 1 & 2) Calcul PGCD et coefficients de Bézout
+    int d = euclide_etendu(a, b, &x0, &y0);
+    printf("\n➡ PGCD(%d, %d) = %d\n", a, b, d);
+    printf("Coefficients de Bézout : x0 = %d, y0 = %d\n", x0, y0);
+
+    // 3) Vérification existence
+    if (c % d != 0) {
+        printf("\n⚠️  Pas de solution entière car %d ne divise pas %d\n", d, c);
+    } else {
+        printf("\n✅ Il existe des solutions entières car %d divise %d\n", d, c);
+
+        // 4) Calcul d’une solution particulière
+        int xp = x0 * (c / d);
+        int yp = y0 * (c / d);
+        printf("Solution particulière : xp = %d, yp = %d\n", xp, yp);
+
+        // 5) Forme générale des solutions
+        int alpha = b / d;
+        int beta = -a / d;
+        printf("Solutions générales :\n");
+        printf("x = %d + %d*k\n", xp, alpha);
+        printf("y = %d + %d*k\n", yp, beta);
+        printf("où k est un entier relatif.\n");
+    }
+
+    return 0;
+}
