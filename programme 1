@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <time.h>
+
+int main() {
+    int a, b, reste, compteur = 0;
+    int a_initial, b_initial;
+    clock_t debut, fin;
+
+    printf("=== Calcul du PGCD et coefficients de Bézout ===\n");
+
+    // Lecture des nombres
+    printf("Entrez le premier nombre : ");
+    scanf("%d", &a);
+    printf("Entrez le deuxième nombre : ");
+    scanf("%d", &b);
+
+    // Conserver les valeurs initiales
+    a_initial = a;
+    b_initial = b;
+
+    // S'assurer que a >= b
+    if (a < b) {
+        int temp = a;
+        a = b;
+        b = temp;
+    }
+
+    // Variables pour l'algorithme étendu
+    int x0 = 1, y0 = 0;
+    int x1 = 0, y1 = 1;
+    int q, temp;
+
+    debut = clock();
+
+    printf("\n Étapes du calcul du PGCD :\n");
+    while (b != 0) {
+        q = a / b;
+        reste = a % b;
+        printf("%d = %d * (%d) + %d\n", a, b, q, reste);
+
+        // Calcul des coefficients de Bézout
+        temp = x1;
+        x1 = x0 - q * x1;
+        x0 = temp;
+
+        temp = y1;
+        y1 = y0 - q * y1;
+        y0 = temp;
+
+        a = b;
+        b = reste;
+        compteur++;
+    }
+
+    fin = clock();
+
+    printf("\n Résultat final :\n");
+    printf("Le PGCD de %d et %d est : %d\n", a_initial, b_initial, a);
+    printf("Coefficients de Bézout : x = %d, y = %d\n", x0, y0);
+    printf("Vérification : %d*%d + %d*%d = %d\n", a_initial, x0, b_initial, y0, a_initial * x0 + b_initial * y0);
+    if (a == 1) {
+        printf("➡ Les deux nombres sont premiers entre eux.\n");
+    } else {
+        printf("➡ Les deux nombres ne sont pas premiers entre eux.\n");
+    }
+
+    double temps = (double)(fin - debut) / CLOCKS_PER_SEC;
+
+    printf("\n=== Statistiques ===\n");
+    printf("Nombre d'opérations (divisions) effectuées : %d\n", compteur);
+    printf("Temps d'exécution approximatif : %.6f secondes\n", temps);
+    printf("Nombre de variables utilisées (stockage) : 12\n");
+    printf("  → a, b, reste, compteur, a_initial, b_initial, x0, y0, x1, y1, temp, q\n");
+
+    return 0;
+}
